@@ -22,5 +22,6 @@ export class Posts {
   // userId:number;
 
   @ManyToOne(() => User, (user) => user.posts)
-  public user: User;
+  @JoinColumn()
+  user: User;
 }

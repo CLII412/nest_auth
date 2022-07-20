@@ -14,8 +14,6 @@ import { Posts } from 'src/posts/entities/post.entity';
   providers: [AuthService],
   controllers: [AuthController],
   imports: [
-    forwardRef(() => PostsModule),
-    // TypeOrmModule.forFeature([User, Posts]),
     forwardRef(() => UsersModule),
     JwtModule.register({
       secret: jwtConstants.secret,

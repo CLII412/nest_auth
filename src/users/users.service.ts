@@ -3,39 +3,44 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Posts } from 'src/posts/entities/post.entity';
+import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserRepository)
+    private userRepository: UserRepository,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto) {
-    const newUser = this.userRepository.create(createUserDto);
-    await this.userRepository.save(newUser);
-
-    return newUser;
+  async createUser(createUserDto: CreateUserDto): Promise<CreateUserDto> {
+    return await this.userRepository.createUser(createUserDto);
   }
 
-  async getUserByEmail(email: string) {
-    return await this.userRepository.findOneBy({ email });
+  async getUserPosts(user: User): Promise<Posts[]> {
+    return await this.userRepository.getUserPosts(user);
   }
 
-  async getAllUsers() {
-    return await this.userRepository.find();
+  async getAllUsers(): Promise<User[]> {
+    return await this.userRepository.getAllUsers();
   }
 
-  async getUserById(id: number) {
-    return await this.userRepository.findOneBy({ id });
+  async getUser(user: User): Promise<User> {
+    return await this.userRepository.getUser(user);
   }
 
-  async changeUserInfo(id: number, updatePostDto: UpdateUserDto) {
-    return await this.userRepository.update({ id }, { ...updatePostDto });
+  async getUserByEmail(email: string): Promise<User> {
+    return await this.userRepository.getUserByEmail(email);
   }
 
-  async removeUser(id: number) {
-    return await this.userRepository.delete({ id });
+  async changeUserInfo(
+    user: User,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateUserDto> {
+    return await this.userRepository.changeUserInfo(user, updateUserDto);
+  }
+
+  async removeUser(user: User) {
+    return await this.userRepository.removeUser(user);
   }
 }

@@ -11,35 +11,52 @@ import {
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { RolesGuard } from 'src/auth/jwt-auth.guard';
+import { PostOwnerGuard } from './guard/post-owner.guard';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { GetPost } from './decorator/get-post.decorator';
+import { Posts } from './entities/post.entity';
+import { PostGuard } from './guard/post.guard';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+    return this.postsService.createPost(createPostDto);
   }
 
-  @UseGuards(RolesGuard)
   @Get()
-  findAll() {
-    return this.postsService.findAll();
-  }
-  @UseGuards(RolesGuard)
-  @Get(':id')
-  getPostById(@Param('id') id: string) {
-    return this.postsService.getPostById(+id);
+  getAllPosts() {
+    return this.postsService.getAllPosts();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  @Get(':postId')
+  @UseGuards(PostGuard)
+  getPostById(@GetPost() post: Posts) {
+    return this.postsService.getPostById(post);
   }
-  @UseGuards(RolesGuard)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+
+  @Get('/author/:postId')
+  @UseGuards(PostGuard)
+  getPostAuthor(@GetPost() post: Posts) {
+    return this.postsService.getPostOwner(post);
+  }
+
+  @Patch(':postId')
+  @UseGuards(AuthGuard)
+  @UseGuards(PostGuard)
+  @UseGuards(PostOwnerGuard)
+  update(@GetPost() post: Posts, @Body() updatePostDto: UpdatePostDto) {
+    return this.postsService.changeUserInfo(post, updatePostDto);
+  }
+
+  @Delete(':postId')
+  @UseGuards(AuthGuard)
+  @UseGuards(PostGuard)
+  @UseGuards(PostOwnerGuard)
+  remove(@GetPost() post: Posts) {
+    return this.postsService.removePost(post);
   }
 }
