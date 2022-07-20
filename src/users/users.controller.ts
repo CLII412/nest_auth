@@ -13,9 +13,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { GetUser } from './decorator/get-user.decorator';
 import { User } from './entities/user.entity';
-import { UserGuard } from './guard/user-guard';
-import { UserEmailGuard } from './guard/user-email.guard';
-import { AuthAccountOwnerGuard } from 'src/auth/guard/auth-owner';
+import { UserGuard } from './guard/user.guard';
+import { AuthAccountOwnerGuard } from 'src/auth/guard/auth-owner.guard';
 
 @Controller('users')
 export class UsersController {
@@ -27,7 +26,7 @@ export class UsersController {
   }
 
   @Get('/posts/:userId')
-  @UseGuards(UserGuard)
+  @UseGuards(AuthGuard, UserGuard)
   getUserPosts(@GetUser() user: User) {
     return this.usersService.getUserPosts(user);
   }
@@ -39,7 +38,7 @@ export class UsersController {
   }
 
   @Get('email/:email')
-  @UseGuards(UserEmailGuard)
+  @UseGuards(AuthGuard, UserGuard)
   getUserByEmail(@GetUser() user: User) {
     return this.usersService.getUser(user);
   }

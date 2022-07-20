@@ -26,7 +26,12 @@ export class UsersService {
   }
 
   async getUser(user: User): Promise<User> {
-    return await this.userRepository.getUser(user);
+    return {
+      id: user.id,
+      email: user.email,
+      password: user.password,
+      posts: user.posts,
+    };
   }
 
   async getUserByEmail(email: string): Promise<User> {

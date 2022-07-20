@@ -20,7 +20,12 @@ export class PostsService {
   }
 
   async getPostOwner(post: Posts): Promise<User> {
-    return await this.postsRepository.getPostOwner(post);
+    return {
+      id: post.user.id,
+      email: post.user.email,
+      password: post.user.password,
+      posts: post.user.posts,
+    };
   }
 
   async getAllPosts(): Promise<Posts[]> {
@@ -28,7 +33,12 @@ export class PostsService {
   }
 
   async getPostById(post: Posts): Promise<Posts> {
-    return await this.postsRepository.getPostById(post);
+    return {
+      id: post.id,
+      name: post.name,
+      description: post.description,
+      user: post.user,
+    };
   }
 
   async changeUserInfo(

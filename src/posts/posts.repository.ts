@@ -11,28 +11,10 @@ export class PostsRepository extends Repository<Posts> {
     return await this.save(newPost);
   }
 
-  async getPostOwner(post: Posts): Promise<User> {
-    return {
-      id: post.user.id,
-      email: post.user.email,
-      password: post.user.password,
-      posts: post.user.posts,
-    };
-  }
-
   async getAllPosts(): Promise<Posts[]> {
     const posts = this.createQueryBuilder('posts');
     posts.select(['posts.name', 'posts.description']);
     return await posts.getMany();
-  }
-
-  async getPostById(post: Posts): Promise<Posts> {
-    return {
-      id: post.id,
-      name: post.name,
-      description: post.description,
-      user: post.user,
-    };
   }
 
   async changePostInfo(

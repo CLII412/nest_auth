@@ -11,10 +11,7 @@ import { log } from 'console';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private postService: PostsService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   canActivate(
     context: ExecutionContext,
@@ -27,7 +24,7 @@ export class AuthGuard implements CanActivate {
     const bearer = authHeader.split(' ')[0];
     const token = authHeader.split(' ')[1];
     if (bearer === 'Bearer' && token) {
-      req.token = token;
+      req.authUser = this.jwtService.verify(token);
       return true;
     } else throw new UnauthorizedException();
   }

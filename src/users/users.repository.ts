@@ -7,9 +7,15 @@ import * as bcrypt from 'bcryptjs';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = createUserDto;
-    return await this.save(newUser);
+  async createUser(user: CreateUserDto): Promise<User> {
+    const { email, password } = user;
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    return await this.save(user);
   }
 
   async getUserPosts(user: User): Promise<Posts[]> {
@@ -24,15 +30,6 @@ export class UserRepository extends Repository<User> {
     const users = this.createQueryBuilder('users');
     users.select(['users.id', 'users.email']);
     return await users.getMany();
-  }
-
-  async getUser(user: User): Promise<User> {
-    return {
-      id: user.id,
-      email: user.email,
-      password: user.password,
-      posts: user.posts,
-    };
   }
 
   async changeUserInfo(

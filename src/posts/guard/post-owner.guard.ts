@@ -10,18 +10,14 @@ import { PostsService } from 'src/posts/posts.service';
 
 @Injectable()
 export class PostOwnerGuard implements CanActivate {
-  constructor(
-    private postService: PostsService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     try {
       const req = context.switchToHttp().getRequest();
-      const user = this.jwtService.verify(req.token);
-      return req.post.user.email === user.email;
+      return req.post.user.email === req.user.email;
     } catch (e) {
       throw new ForbiddenException();
     }
