@@ -5,6 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { log } from 'console';
 import { ERROR_MESSAGE } from 'src/constants/errors';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -26,14 +27,12 @@ export class UserGuard implements CanActivate {
 
     const user = await this.userRepository.findOne({
       where: { id: params.userId },
-      relations: ['posts'],
     });
     if (!user) {
       throw new BadRequestException(ERROR_MESSAGE.USER_NOT_FOUND);
     }
 
     request.user = user;
-
     return true;
   }
 }

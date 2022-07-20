@@ -1,8 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
@@ -10,7 +10,7 @@ import { PostsService } from 'src/posts/posts.service';
 import { log } from 'console';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthAccountOwnerGuard implements CanActivate {
   constructor(
     private postService: PostsService,
     private jwtService: JwtService,
@@ -19,16 +19,12 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const req = context.switchToHttp().getRequest();
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('');
+    try {
+      const req = context.switchToHttp().getRequest();
+      const user = this.jwtService.verify(req.token);
+      return req.user.email === user.email;
+    } catch (e) {
+      throw new ForbiddenException('fgdffg');
     }
-    const bearer = authHeader.split(' ')[0];
-    const token = authHeader.split(' ')[1];
-    if (bearer === 'Bearer' && token) {
-      req.token = token;
-      return true;
-    } else throw new UnauthorizedException();
   }
 }

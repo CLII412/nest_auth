@@ -20,9 +20,8 @@ export class PostOwnerGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     try {
       const req = context.switchToHttp().getRequest();
-      const token = req.headers.authorization.split(' ')[1];
-      const user = this.jwtService.verify(token);
-      return req.post.user === user;
+      const user = this.jwtService.verify(req.token);
+      return req.post.user.email === user.email;
     } catch (e) {
       throw new ForbiddenException();
     }

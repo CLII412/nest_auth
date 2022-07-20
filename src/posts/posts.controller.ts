@@ -45,17 +45,13 @@ export class PostsController {
   }
 
   @Patch(':postId')
-  @UseGuards(AuthGuard)
-  @UseGuards(PostGuard)
-  @UseGuards(PostOwnerGuard)
+  @UseGuards(AuthGuard, PostGuard, PostOwnerGuard)
   update(@GetPost() post: Posts, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.changeUserInfo(post, updatePostDto);
   }
 
   @Delete(':postId')
-  @UseGuards(AuthGuard)
-  @UseGuards(PostGuard)
-  @UseGuards(PostOwnerGuard)
+  @UseGuards(AuthGuard, PostGuard, PostOwnerGuard)
   remove(@GetPost() post: Posts) {
     return this.postsService.removePost(post);
   }
